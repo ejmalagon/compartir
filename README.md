@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -26,26 +27,28 @@
             <!-- Se llenará dinámicamente -->
         </tbody>
     </table>
+    <p id="status" style="color: red;"></p>
+
     <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCpCSFy621DXXmsORl8HffbFvDdaP0Y7XE",
-  authDomain: "mapa-margaritas.firebaseapp.com",
-  databaseURL: "[https://mapa-margaritas-default-rtdb.firebaseio.com",
-  projectId: "mapa-margaritas",
-  storageBucket: "mapa-margaritas.firebasestorage.app",
-  messagingSenderId: "474984702533",
-  appId: "1:474984702533:web:7be228872db83b357db92c",
-  measurementId: "G-TVM15DZW7W"
-};
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_AUTH_DOMAIN",
+            databaseURL: "TU_DATABASE_URL",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_STORAGE_BUCKET",
+            messagingSenderId: "TU_MESSAGING_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
         
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
         const estudiantes = ["Jorgita", "Leidis", "Lau", "MAJO", "Cristian", "Karen", "Jeferson", "Marito", "Cordero", "Angella", "Yuyis", "Ducu", "Gamboas", "Sofi", "Lucho", "Daniel", "Mafe", "Deilis", "Nico", "Aaron", "Aletsa", "Sharol", "Juancho", "Liz", "Julian", "Rayfel", "Viloria"];
-        
+
         function cargarLista() {
             const lista = document.getElementById("lista");
             lista.innerHTML = "";
+
             estudiantes.forEach(nombre => {
                 const fila = document.createElement("tr");
                 fila.innerHTML = `<td>${nombre}</td><td><input type="text" id="${nombre}" disabled></td>`;
@@ -53,9 +56,9 @@ const firebaseConfig = {
                 cargarDato(nombre);
             });
         }
-        
+
         function cargarDato(nombre) {
-            db.ref("listaCompartir/" + nombre).once("value", snapshot => {
+            db.ref("listaCompartir/" + nombre).on("value", snapshot => {
                 const valor = snapshot.val();
                 const input = document.getElementById(nombre);
                 if (valor) {
@@ -64,15 +67,26 @@ const firebaseConfig = {
                     input.disabled = false;
                     input.addEventListener("change", () => guardarDato(nombre, input.value));
                 }
+            }, error => {
+                document.getElementById("status").innerText = "Error al conectar con la base de datos.";
             });
         }
-        
+
         function guardarDato(nombre, valor) {
-            db.ref("listaCompartir/" + nombre).set(valor);
-            document.getElementById(nombre).disabled = true;
-            alert("Dato guardado");
+            if (valor.trim() === "") {
+                alert("Por favor, ingresa un valor válido.");
+                return;
+            }
+            db.ref("listaCompartir/" + nombre).set(valor)
+                .then(() => {
+                    document.getElementById(nombre).disabled = true;
+                    alert("Dato guardado");
+                })
+                .catch(error => {
+                    alert("Error al guardar: " + error.message);
+                });
         }
-        
+
         cargarLista();
     </script>
 </body>
