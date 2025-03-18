@@ -26,8 +26,7 @@
             <!-- Se llenará dinámicamente -->
         </tbody>
     </table>
-    <p id="status" style="color: red;"></p>
-
+    <script>
 const firebaseConfig = {
   apiKey: "AIzaSyCpCSFy621DXXmsORl8HffbFvDdaP0Y7XE",
   authDomain: "mapa-margaritas.firebaseapp.com",
@@ -43,11 +42,10 @@ const firebaseConfig = {
         const db = firebase.database();
 
         const estudiantes = ["Jorgita", "Leidis", "Lau", "MAJO", "Cristian", "Karen", "Jeferson", "Marito", "Cordero", "Angella", "Yuyis", "Ducu", "Gamboas", "Sofi", "Lucho", "Daniel", "Mafe", "Deilis", "Nico", "Aaron", "Aletsa", "Sharol", "Juancho", "Liz", "Julian", "Rayfel", "Viloria"];
-
+        
         function cargarLista() {
             const lista = document.getElementById("lista");
             lista.innerHTML = "";
-
             estudiantes.forEach(nombre => {
                 const fila = document.createElement("tr");
                 fila.innerHTML = `<td>${nombre}</td><td><input type="text" id="${nombre}" disabled></td>`;
@@ -55,9 +53,9 @@ const firebaseConfig = {
                 cargarDato(nombre);
             });
         }
-
+        
         function cargarDato(nombre) {
-            db.ref("listaCompartir/" + nombre).on("value", snapshot => {
+            db.ref("listaCompartir/" + nombre).once("value", snapshot => {
                 const valor = snapshot.val();
                 const input = document.getElementById(nombre);
                 if (valor) {
@@ -66,26 +64,15 @@ const firebaseConfig = {
                     input.disabled = false;
                     input.addEventListener("change", () => guardarDato(nombre, input.value));
                 }
-            }, error => {
-                document.getElementById("status").innerText = "Error al conectar con la base de datos.";
             });
         }
-
+        
         function guardarDato(nombre, valor) {
-            if (valor.trim() === "") {
-                alert("Por favor, ingresa un valor válido.");
-                return;
-            }
-            db.ref("listaCompartir/" + nombre).set(valor)
-                .then(() => {
-                    document.getElementById(nombre).disabled = true;
-                    alert("Dato guardado");
-                })
-                .catch(error => {
-                    alert("Error al guardar: " + error.message);
-                });
+            db.ref("listaCompartir/" + nombre).set(valor);
+            document.getElementById(nombre).disabled = true;
+            alert("Dato guardado");
         }
-
+        
         cargarLista();
     </script>
 </body>
