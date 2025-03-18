@@ -30,7 +30,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyCpCSFy621DXXmsORl8HffbFvDdaP0Y7XE",
   authDomain: "mapa-margaritas.firebaseapp.com",
-  databaseURL: "https://mapa-margaritas-default-rtdb.firebaseio.com",
+  databaseURL: "[https://mapa-margaritas-default-rtdb.firebaseio.com",
   projectId: "mapa-margaritas",
   storageBucket: "mapa-margaritas.firebasestorage.app",
   messagingSenderId: "474984702533",
